@@ -1,0 +1,12 @@
+
+dist
+public
+node_modules
+
+**/.git
+**/.svn
+**/.hg
+
+**/.md
+
+
