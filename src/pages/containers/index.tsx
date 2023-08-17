@@ -1,6 +1,7 @@
 import style from './style.module.less';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 import Decorate from '../../components/Decorate';
+import Matrix from '../../components/Matrix';
 function App() {
 	return (
 		<div className={style.app}>
@@ -11,6 +12,11 @@ function App() {
 				})}
 			>
 				<Decorate />
+				<div className={style.screen}>
+					<div className={style.panel}>
+						<Matrix matrix={[]} cur={{}} />
+					</div>
+				</div>
 			</div>
 		</div>
 	);
