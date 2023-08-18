@@ -14,7 +14,7 @@ function App() {
 				<Decorate />
 				<div className={style.screen}>
 					<div className={style.panel}>
-						<Matrix matrix={[]} cur={{}} />
+						<Matrix />
 					</div>
 				</div>
 			</div>

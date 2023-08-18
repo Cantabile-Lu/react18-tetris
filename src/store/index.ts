@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import matrixSlice from './matrix';
 export const store = configureStore({
 	reducer: {
-		matrix: matrixSlice
+		matrixSlice
 	}
 });
 
