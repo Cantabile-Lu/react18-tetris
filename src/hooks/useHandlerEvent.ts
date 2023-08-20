@@ -47,7 +47,7 @@ export const useHandlerEvent = () => {
 		// 2: 开始音效
 		// 3:  设置难度起始行
 		// 4:  设置当前可移动块
-		dispatch(changeCur({ type: 'I' }));
+		dispatch(changeCur({ type: 'T' }));
 		// 5:  设置下一个可移动块
 		// 6:  开始自动落下
 		auto();

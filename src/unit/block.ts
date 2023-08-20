@@ -6,7 +6,7 @@ function setXY(type: BlockType) {
 	if (type === 'I') {
 		return List([0, 3]);
 	} else {
-		return List([0, 4]);
+		return List([-1, 4]);
 	}
 }
 export class Block {
