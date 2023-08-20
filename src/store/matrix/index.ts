@@ -1,20 +1,23 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { blankMatrix } from '../../constant';
-import { List } from 'immutable';
-
+import { Matrix } from '../../types';
 export interface IMatrix {
-	matrix: List<number[]>;
+	matrix: Matrix;
+	value: number;
 }
 
 const initialState: IMatrix = {
-	matrix: blankMatrix
+	matrix: blankMatrix,
+	value: 0
 };
 export const matrixSlice = createSlice({
 	name: 'matrix',
 	initialState,
 	reducers: {
-		changeMatrix(state) {
-			console.log(`🚀🚀🚀🚀🚀-> in index.ts on 10`, state);
+		changeMatrix(state, action: PayloadAction<Matrix>) {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			state.matrix = action.payload;
 		}
 	}
 });
