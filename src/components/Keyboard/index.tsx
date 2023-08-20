@@ -5,7 +5,9 @@
 
 import style from './style.module.less';
 import { Button } from './Button';
+import { useHandlerEvent } from '../../hooks/useHandlerEvent.ts';
 export const Keyboard = () => {
+	const { start } = useHandlerEvent();
 	return (
 		<div className={style.keyboard}>
 			<Button
@@ -52,7 +54,7 @@ export const Keyboard = () => {
 				left={52}
 				label={`开始`}
 				active={() => {
-					console.log(`🚀🚀🚀🚀🚀-> in index.tsx on 54`, `开始`);
+					start();
 				}}
 			/>
 			<Button
