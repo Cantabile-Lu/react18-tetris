@@ -52,4 +52,14 @@ export class Block {
 			timeStamp: this.timeStamp
 		};
 	}
+
+	right(): Required<IBlock> {
+		return {
+			shape: this.shape,
+			type: this.type,
+			xy: List([this.xy.get(0)!, this.xy.get(1)! + 1]),
+			rotateIndex: this.rotateIndex,
+			timeStamp: this.timeStamp
+		};
+	}
 }

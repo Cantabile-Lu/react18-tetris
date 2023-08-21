@@ -80,16 +80,15 @@ export const useHandlerEvent = () => {
 		auto();
 		console.log(`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 81`);
 	};
-	const left = () => {
+	const move = (isRight: boolean) => {
 		const cur = selector().curSlice.cur;
 		if (cur) {
-			const next = cur.left();
+			const next = isRight ? cur.right() : cur.left();
 			if (want(next, selector().matrixSlice.matrix)) {
 				dispatch(changeCur(next));
 			}
 		}
 	};
 
-	const right = () => {};
-	return { start, left, right };
+	return { start, move };
 };
