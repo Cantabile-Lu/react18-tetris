@@ -1,4 +1,5 @@
 import { List } from 'immutable';
+import { BlockType } from '../types';
 // 块形状
 export const blockShape = {
 	I: [[1, 1, 1, 1]],
@@ -27,6 +28,8 @@ export const blockShape = {
 		[1, 1, 1]
 	]
 };
+// 块类型
+export const blockType = Object.keys(blockShape) as Array<BlockType>;
 // 空白格子
 export const blankLine: number[] = Array(10).fill(0);
 // 填充行

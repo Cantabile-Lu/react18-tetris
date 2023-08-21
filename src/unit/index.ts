@@ -1,4 +1,5 @@
-import { IBlock, Matrix } from '../types';
+import { BlockType, IBlock, Matrix } from '../types';
+import { blockType } from '../constant';
 
 /**
  * @description 判断是否可以移动
@@ -53,4 +54,20 @@ export const setMatrixLine = (
 		})
 	);
 	return matrix;
+};
+/**
+ * @description 是否游戏结束
+ * 通过判断数组第一行是否有值
+ * @return {boolean} boolean
+ */
+export const isGameOver = (matrix: Matrix): boolean => {
+	return matrix.get(0)!.some((n) => !!n);
+};
+
+/**
+ * @description 生成随机方块值
+ */
+export const getNextBlock = (): BlockType => {
+	const len = blockType.length;
+	return blockType[Math.floor(Math.random() * len)];
 };
