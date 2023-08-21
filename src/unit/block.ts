@@ -29,7 +29,7 @@ export class Block {
 	 * @description 降落
 	 * 通过不断改变xy的值实现
 	 */
-	fall(n = 1): IBlock {
+	fall(n = 1): Required<IBlock> {
 		const index = this.xy.get(0)! + n;
 		return {
 			shape: this.shape,
@@ -37,6 +37,19 @@ export class Block {
 			xy: List([index, this.xy.get(1)!]),
 			rotateIndex: this.rotateIndex,
 			timeStamp: Date.now()
+		};
+	}
+
+	/**
+	 * @description 左移动
+	 */
+	left(): Required<IBlock> {
+		return {
+			shape: this.shape,
+			type: this.type,
+			xy: List([this.xy.get(0)!, this.xy.get(1)! - 1]),
+			rotateIndex: this.rotateIndex,
+			timeStamp: this.timeStamp
 		};
 	}
 }

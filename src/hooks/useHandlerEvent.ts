@@ -78,6 +78,18 @@ export const useHandlerEvent = () => {
 		// 5:  设置下一个可移动块
 		// 6:  开始自动落下
 		auto();
+		console.log(`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 81`);
 	};
-	return { start };
+	const left = () => {
+		const cur = selector().curSlice.cur;
+		if (cur) {
+			const next = cur.left();
+			if (want(next, selector().matrixSlice.matrix)) {
+				dispatch(changeCur(next));
+			}
+		}
+	};
+
+	const right = () => {};
+	return { start, left, right };
 };
