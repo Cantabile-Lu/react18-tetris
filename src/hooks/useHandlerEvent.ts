@@ -48,6 +48,7 @@ export const useHandlerEvent = () => {
 
 	// 下一个方块
 	const nextAround = (matrix: Matrix) => {
+		clearTimeout(timer.current);
 		dispatch(changeMatrix(matrix));
 
 		// 判断是否结束
@@ -55,7 +56,7 @@ export const useHandlerEvent = () => {
 			return;
 		}
 		// 设置下一个可移动块
-		dispatch(changeCur({ type: getNextBlock() }));
+		dispatch(changeCur({ type: 'I' }));
 		// 继续调用
 		auto();
 	};
@@ -80,6 +81,7 @@ export const useHandlerEvent = () => {
 		auto();
 		console.log(`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 81`);
 	};
+	// 移动块
 	const move = (isRight: boolean) => {
 		const cur = selector().curSlice.cur;
 		if (cur) {
@@ -90,5 +92,15 @@ export const useHandlerEvent = () => {
 		}
 	};
 
-	return { start, move };
+	// 旋转块
+	const rotate = () => {
+		const cur = selector().curSlice.cur;
+		if (cur) {
+			const next = cur.rotate();
+			if (want(next, selector().matrixSlice.matrix)) {
+				dispatch(changeCur(next));
+			}
+		}
+	};
+	return { start, move, rotate };
 };

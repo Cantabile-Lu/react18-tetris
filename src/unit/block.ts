@@ -62,4 +62,55 @@ export class Block {
 			timeStamp: this.timeStamp
 		};
 	}
+
+	// 旋转
+	rotate(): Required<IBlock> {
+		const shape = this.shape;
+		let result: List<List<number>> = List([]);
+		shape.forEach((m) =>
+			m.forEach((n, k) => {
+				const index = m.size - k - 1;
+				if (result.get(index) === undefined) {
+					// 如果没有这一行, 则创建
+					result = result.set(index, List([]));
+				}
+				const tempK = result.get(index)!.push(n);
+				result = result.set(index, tempK);
+			})
+		);
+		const origin = {
+			I: [
+				[-1, 1],
+				[1, -1]
+			],
+			L: [[0, 0]],
+			J: [[0, 0]],
+			Z: [[0, 0]],
+			S: [[0, 0]],
+			O: [[0, 0]],
+			T: [
+				[0, 0],
+				[1, 0],
+				[-1, 1],
+				[0, -1]
+			]
+		};
+		// 旋转后的xy
+		const nextXy = List([
+			this.xy.get(0)! + origin[this.type][this.rotateIndex][0],
+			this.xy.get(1)! + origin[this.type][this.rotateIndex][1]
+		]);
+		// 旋转后的index
+		const nextRotateIndex =
+			this.rotateIndex + 1 >= origin[this.type].length
+				? 0
+				: this.rotateIndex + 1;
+		return {
+			shape: result,
+			type: this.type,
+			xy: nextXy,
+			rotateIndex: nextRotateIndex,
+			timeStamp: this.timeStamp
+		};
+	}
 }
