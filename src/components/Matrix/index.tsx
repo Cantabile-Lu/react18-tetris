@@ -1,21 +1,28 @@
 /**
  * @description 矩阵组件
  */
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import classnames from 'classnames';
 import { RootState } from '../../store';
 import style from './style.module.less';
-import { setMatrixLine } from '../../unit';
+import { isClear, setMatrixLine } from '../../unit';
+import { List } from 'immutable';
 
 const Matrix = memo(() => {
 	const { matrix, cur } = useSelector((store: RootState) => {
 		return {
 			matrix: store.matrixSlice.matrix,
-			cur: store.curSlice.cur // [0, 3] ||  [-1,4]
+			cur: store.curSlice.cur //当前方块
 		};
 	}, shallowEqual);
 
+	const [clearLines, setClearLines] = useState<number[]>([]); //消除的行数
+
+	useEffect(() => {
+		const clearLines = isClear(matrix);
+		setClearLines(clearLines);
+	}, [matrix]);
 	const getResult = () => {
 		let matrixData = matrix;
 		if (cur) {

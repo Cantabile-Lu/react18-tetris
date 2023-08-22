@@ -7,7 +7,7 @@ import style from './style.module.less';
 import { Button } from './Button';
 import { useHandlerEvent } from '../../hooks/useHandlerEvent.ts';
 export const Keyboard = () => {
-	const { start, move, rotate } = useHandlerEvent();
+	const { start, move, rotate, down } = useHandlerEvent();
 	return (
 		<div className={style.keyboard}>
 			<Button
@@ -29,7 +29,9 @@ export const Keyboard = () => {
 				left={374}
 				label={'下'}
 				arrow="translate(0,-71px) rotate(180deg)"
-				active={() => {}}
+				active={() => {
+					down();
+				}}
 			/>
 			<Button
 				color="blue"

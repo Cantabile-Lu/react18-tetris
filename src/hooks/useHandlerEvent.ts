@@ -1,10 +1,18 @@
 import { useDispatch } from 'react-redux';
 import { changeCur } from '../store/cur';
 import { store } from '../store';
-import { getNextBlock, isGameOver, setMatrixLine, want } from '../unit';
+import {
+	getNextBlock,
+	isClear,
+	isGameOver,
+	setMatrixLine,
+	want
+} from '../unit';
 import { IBlock, Matrix } from '../types';
 import { useRef } from 'react';
 import { changeMatrix } from '../store/matrix';
+import { is, List } from 'immutable';
+import { blankLine } from '../constant';
 
 /**
  * @description 处理事件
@@ -29,16 +37,28 @@ export const useHandlerEvent = () => {
 			if (isWant) {
 				dispatch(changeCur(next));
 				// 递归调用自身
-				timer.current = window.setTimeout(fall, 1000);
+				timer.current = window.setTimeout(fall, 100);
 			} else {
 				// 获取当前块并设置新的矩阵
-				const newMatrix = setMatrixLine(cur, selector().matrixSlice.matrix);
+				let newMatrix = setMatrixLine(cur, selector().matrixSlice.matrix);
 				// 块触底
-				console.log(
-					`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 37`,
-					'当前block触底'
-				);
-				nextAround(newMatrix);
+				const clearLines = isClear(newMatrix);
+				if (clearLines.length) {
+					console.log(
+						`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 47`,
+						'触发当前函数',
+						clearLines.length
+					);
+					clearLines.forEach((line) => {
+						newMatrix = newMatrix.set(
+							line,
+							List([2, 2, 2, 2, 2, 2, 2, 2, 2, 2])
+						);
+					});
+					clear(newMatrix, clearLines);
+				} else {
+					nextAround(newMatrix);
+				}
 			}
 			// 重置当前可移动块
 		};
@@ -46,6 +66,23 @@ export const useHandlerEvent = () => {
 		timer.current = window.setTimeout(fall, 1000);
 	};
 
+	// 消除行
+	const clear = (matrix: Matrix, lines: number[]) => {
+		console.log(
+			`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 69`,
+			'触发清除函数',
+			lines
+		);
+		let newMatrix = matrix;
+		lines.forEach((line) => {
+			// 清除 一行
+			newMatrix = newMatrix.splice(line, 1);
+			// 补齐一行空白格
+			newMatrix = newMatrix.unshift(List(blankLine));
+		});
+		nextAround(newMatrix);
+		// dispatch(changeMatrix(newMatrix));
+	};
 	// 下一个方块
 	const nextAround = (matrix: Matrix) => {
 		clearTimeout(timer.current);
@@ -56,32 +93,23 @@ export const useHandlerEvent = () => {
 			return;
 		}
 		// 设置下一个可移动块
-		dispatch(changeCur({ type: 'I' }));
+		dispatch(changeCur({ type: 'O' }));
 		// 继续调用
 		auto();
 	};
 
-	/**
-	 * 1: 如果是生产-批发-零售花椒,辣椒这类产品需要注册
-	 * 什么行业门类?
-	 * 什么行业类别?
-	 * 什么经营范围?
-	 * 2: 经营这类产品需要食品经营许可证或者食品生产许可证吗?
-	 * 3: 如果需要食品许可证的话, 生产地址是填家里的地址吗? 家里需要证件吗?
-	 */
 	// 开始游戏
 	const start = () => {
 		// 1: 开始动画
 		// 2: 开始音效
 		// 3:  设置难度起始行
 		// 4:  设置当前可移动块
-		dispatch(changeCur({ type: getNextBlock() }));
+		dispatch(changeCur({ type: 'O' }));
 		// 5:  设置下一个可移动块
 		// 6:  开始自动落下
 		auto();
-		console.log(`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 81`);
 	};
-	// 移动块
+	// 左右移动块
 	const move = (isRight: boolean) => {
 		const cur = selector().curSlice.cur;
 		if (cur) {
@@ -102,5 +130,17 @@ export const useHandlerEvent = () => {
 			}
 		}
 	};
-	return { start, move, rotate };
+	// 下落
+	const down = () => {
+		// 1: 可以快速落下方块
+		// 2: 可以设置难度, 起始行
+		const cur = selector().curSlice.cur;
+		if (cur) {
+			const next = cur.fall();
+			if (want(next, selector().matrixSlice.matrix)) {
+				dispatch(changeCur(next));
+			}
+		}
+	};
+	return { start, move, rotate, down };
 };

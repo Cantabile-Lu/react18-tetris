@@ -65,6 +65,22 @@ export const isGameOver = (matrix: Matrix): boolean => {
 };
 
 /**
+ * @description 当前矩阵是否有可消除行
+ * @date: 2023-08-23
+ */
+export const isClear = (matrix: Matrix) => {
+	const cleanliness: number[] = [];
+	matrix.forEach((m, k) => {
+		if (m.every((n) => !!n)) {
+			cleanliness.push(k);
+		}
+	});
+	if (!cleanliness.length) {
+		return [];
+	}
+	return cleanliness;
+};
+/**
  * @description 生成随机方块值
  */
 export const getNextBlock = (): BlockType => {
