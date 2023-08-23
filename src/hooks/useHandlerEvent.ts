@@ -40,25 +40,9 @@ export const useHandlerEvent = () => {
 				timer.current = window.setTimeout(fall, 100);
 			} else {
 				// 获取当前块并设置新的矩阵
-				let newMatrix = setMatrixLine(cur, selector().matrixSlice.matrix);
+				const newMatrix = setMatrixLine(cur, selector().matrixSlice.matrix);
 				// 块触底
-				const clearLines = isClear(newMatrix);
-				if (clearLines.length) {
-					console.log(
-						`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 47`,
-						'触发当前函数',
-						clearLines.length
-					);
-					clearLines.forEach((line) => {
-						newMatrix = newMatrix.set(
-							line,
-							List([2, 2, 2, 2, 2, 2, 2, 2, 2, 2])
-						);
-					});
-					clear(newMatrix, clearLines);
-				} else {
-					nextAround(newMatrix);
-				}
+				nextAround(newMatrix);
 			}
 			// 重置当前可移动块
 		};
@@ -68,11 +52,6 @@ export const useHandlerEvent = () => {
 
 	// 消除行
 	const clear = (matrix: Matrix, lines: number[]) => {
-		console.log(
-			`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 69`,
-			'触发清除函数',
-			lines
-		);
 		let newMatrix = matrix;
 		lines.forEach((line) => {
 			// 清除 一行
@@ -80,8 +59,8 @@ export const useHandlerEvent = () => {
 			// 补齐一行空白格
 			newMatrix = newMatrix.unshift(List(blankLine));
 		});
-		nextAround(newMatrix);
-		// dispatch(changeMatrix(newMatrix));
+		dispatch(changeMatrix(newMatrix));
+		auto();
 	};
 	// 下一个方块
 	const nextAround = (matrix: Matrix) => {
@@ -142,5 +121,5 @@ export const useHandlerEvent = () => {
 			}
 		}
 	};
-	return { start, move, rotate, down };
+	return { start, move, rotate, down, clear };
 };
