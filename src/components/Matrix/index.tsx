@@ -30,7 +30,7 @@ const Matrix = memo(() => {
 			clearAnimate();
 		}
 	}, [matrix]);
-	let t = window.setTimeout;
+	const t = window.setTimeout;
 	function clearAnimate() {
 		const anima = (callback: Function) => {
 			t(() => {
@@ -47,7 +47,7 @@ const Matrix = memo(() => {
 			anima(() => {
 				anima(() => {
 					t(() => {
-						clear(matrix, clearLines);
+						// clear(matrix, clearLines);
 					}, 100);
 				});
 			});
@@ -55,12 +55,13 @@ const Matrix = memo(() => {
 	}
 	const getResult = () => {
 		let matrixData = matrix;
-		if (clearLines.length) {
-			const colors = Array(10).fill(animateColor);
-			clearLines.forEach((index) => {
-				matrixData = matrixData.set(index, List(colors));
-			});
-		} else if (cur) {
+		// if (clearLines.length) {
+		// 	const colors = Array(10).fill(animateColor);
+		// 	clearLines.forEach((index) => {
+		// 		matrixData = matrixData.set(index, List(colors));
+		// 	});
+		// } else
+		if (cur) {
 			//shape ->  I : [[1,1,1,1]]
 			//shape ->  T: [
 			// 		[0, 1, 0],

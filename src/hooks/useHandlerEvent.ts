@@ -13,6 +13,7 @@ import { useRef } from 'react';
 import { changeMatrix } from '../store/matrix';
 import { is, List } from 'immutable';
 import { blankLine } from '../constant';
+import { changePause } from '../store/pause';
 
 /**
  * @description 处理事件
@@ -42,6 +43,7 @@ export const useHandlerEvent = () => {
 				// 获取当前块并设置新的矩阵
 				const newMatrix = setMatrixLine(cur, selector().matrixSlice.matrix);
 				// 块触底
+
 				nextAround(newMatrix);
 			}
 			// 重置当前可移动块
@@ -60,7 +62,7 @@ export const useHandlerEvent = () => {
 			newMatrix = newMatrix.unshift(List(blankLine));
 		});
 		dispatch(changeMatrix(newMatrix));
-		auto();
+		// auto();
 	};
 	// 下一个方块
 	const nextAround = (matrix: Matrix) => {
@@ -71,6 +73,10 @@ export const useHandlerEvent = () => {
 		if (isGameOver(matrix)) {
 			return;
 		}
+
+		// 是否可消除
+		const lines = isClear(matrix);
+		console.log(`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 78`, lines);
 		// 设置下一个可移动块
 		dispatch(changeCur({ type: 'O' }));
 		// 继续调用
@@ -114,6 +120,11 @@ export const useHandlerEvent = () => {
 		// 1: 可以快速落下方块
 		// 2: 可以设置难度, 起始行
 		const cur = selector().curSlice.cur;
+		const isPause = selector().pauseSlice.pause;
+		if (isPause) {
+			pause(false);
+			return;
+		}
 		if (cur) {
 			const next = cur.fall();
 			if (want(next, selector().matrixSlice.matrix)) {
@@ -121,5 +132,15 @@ export const useHandlerEvent = () => {
 			}
 		}
 	};
-	return { start, move, rotate, down, clear };
+
+	// 暂停
+	const pause = (isPause: boolean) => {
+		dispatch(changePause(isPause));
+		if (isPause) {
+			clearTimeout(timer.current);
+			return;
+		}
+		auto();
+	};
+	return { start, move, rotate, down, clear, pause };
 };

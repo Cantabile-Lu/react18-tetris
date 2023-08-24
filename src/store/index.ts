@@ -4,14 +4,15 @@ import {
 } from '@reduxjs/toolkit';
 import matrixSlice from './matrix';
 import curSlice from './cur';
-
+import pauseSlice from './pause';
 const immutableInvariantMiddleware = createImmutableStateInvariantMiddleware({
 	ignoredPaths: ['curSlice.cur', 'matrixSlice.matrix']
 });
 export const store = configureStore({
 	reducer: {
 		matrixSlice,
-		curSlice
+		curSlice,
+		pauseSlice
 	},
 	//https://stackoverflow.com/questions/61704805/getting-an-error-a-non-serializable-value-was-detected-in-the-state-when-using
 	middleware: [immutableInvariantMiddleware]
