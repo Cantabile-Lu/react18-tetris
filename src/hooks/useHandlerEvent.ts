@@ -43,7 +43,6 @@ export const useHandlerEvent = () => {
 				// 获取当前块并设置新的矩阵
 				const newMatrix = setMatrixLine(cur, selector().matrixSlice.matrix);
 				// 块触底
-
 				nextAround(newMatrix);
 			}
 			// 重置当前可移动块
@@ -54,35 +53,63 @@ export const useHandlerEvent = () => {
 
 	// 消除行
 	const clear = (matrix: Matrix, lines: number[]) => {
-		let newMatrix = matrix;
 		lines.forEach((line) => {
 			// 清除 一行
-			newMatrix = newMatrix.splice(line, 1);
+			matrix = matrix.splice(line, 1);
 			// 补齐一行空白格
-			newMatrix = newMatrix.unshift(List(blankLine));
+			matrix = matrix.unshift(List(blankLine));
 		});
-		dispatch(changeMatrix(newMatrix));
+		return matrix;
+		// dispatch(changeMatrix(matrix));
 		// auto();
 	};
 	// 下一个方块
 	const nextAround = (matrix: Matrix) => {
+		let newMatrix = matrix;
 		clearTimeout(timer.current);
-		dispatch(changeMatrix(matrix));
 
 		// 判断是否结束
-		if (isGameOver(matrix)) {
+		if (isGameOver(newMatrix)) {
 			return;
 		}
 
 		// 是否可消除
-		const lines = isClear(matrix);
-		console.log(`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 78`, lines);
+		const lines = isClear(newMatrix);
+		if (lines.length) {
+			// 如果湿可以消除的话, 设置颜色
+			const colors: number[] = Array(10).fill(2);
+			lines.forEach((line) => {
+				newMatrix = newMatrix.set(line, List(colors));
+			});
+			clearAnimate(newMatrix, lines);
+		}
+		dispatch(changeMatrix(newMatrix));
 		// 设置下一个可移动块
 		dispatch(changeCur({ type: 'O' }));
-		// 继续调用
 		auto();
 	};
-
+	function clearAnimate(matrix: Matrix, lines: number[]) {
+		const t = window.setTimeout;
+		const anima = (callback: Function) => {
+			t(() => {
+				t(() => {
+					if (typeof callback === 'function') {
+						callback();
+					}
+				}, 100);
+			}, 100);
+		};
+		anima(() => {
+			anima(() => {
+				anima(() => {
+					t(() => {
+						const newMatrix = clear(matrix, lines);
+						dispatch(changeMatrix(newMatrix));
+					}, 100);
+				});
+			});
+		});
+	}
 	// 开始游戏
 	const start = () => {
 		// 1: 开始动画
