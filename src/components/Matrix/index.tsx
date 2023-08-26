@@ -1,7 +1,7 @@
 /**
  * @description 矩阵组件
  */
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import classnames from 'classnames';
 import { RootState } from '../../store';
@@ -15,12 +15,36 @@ const Matrix = memo(() => {
 			cur: store.curSlice.cur //当前方块
 		};
 	}, shallowEqual);
+
+	function clearAnimate() {
+		const t = window.setTimeout;
+		const anima = (callback: Function) => {
+			t(() => {
+				t(() => {
+					if (typeof callback === 'function') {
+						callback();
+					}
+				}, 100);
+			}, 100);
+		};
+		anima(() => {
+			anima(() => {
+				anima(() => {
+					t(() => {
+						// const newMatrix = clear(matrix, lines);
+						// dispatch(changeMatrix(newMatrix));
+						// clear(matrix, lines);
+					}, 100);
+				});
+			});
+		});
+	}
 	const getResult = () => {
 		let matrixData = matrix;
-		// if (clearLines.length) {
+		// if (lines.length) {
 		// 	const colors = Array(10).fill(animateColor);
-		// 	clearLines.forEach((index) => {
-		// 		matrixData = matrixData.set(index, List(colors));
+		// 	lines.forEach((line) => {
+		// 		matrixData = matrixData.set(line, List(colors));
 		// 	});
 		// } else
 		if (cur) {

@@ -1,5 +1,6 @@
 import { BlockType, IBlock, Matrix } from '../types';
-import { blockType } from '../constant';
+import { blankLine, blockType } from '../constant';
+import { List } from 'immutable';
 
 /**
  * @description 判断是否可以移动
@@ -86,4 +87,16 @@ export const isClear = (matrix: Matrix) => {
 export const getNextBlock = (): BlockType => {
 	const len = blockType.length;
 	return blockType[Math.floor(Math.random() * len)];
+};
+// 消除行
+export const clear = (matrix: Matrix, lines: number[]) => {
+	lines.forEach((line) => {
+		// 清除 一行
+		matrix = matrix.splice(line, 1);
+		// 补齐一行空白格
+		matrix = matrix.unshift(List(blankLine));
+	});
+	return matrix;
+	// dispatch(changeMatrix(matrix));
+	// auto();
 };

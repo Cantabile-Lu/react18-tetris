@@ -9,7 +9,7 @@ import {
 	want
 } from '../unit';
 import { IBlock, Matrix } from '../types';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { changeMatrix } from '../store/matrix';
 import { is, List } from 'immutable';
 import { blankLine } from '../constant';
@@ -23,6 +23,10 @@ export const useHandlerEvent = () => {
 	const selector = store.getState;
 	const dispatch = useDispatch();
 	const timer = useRef(0);
+
+	const [lines, setLines] = useState<number[]>([]);
+	const [animateColor, setAnimateColor] = useState(0);
+
 	const auto = (timeout = 0) => {
 		// 自动降落函数
 		const fall = () => {
@@ -51,18 +55,6 @@ export const useHandlerEvent = () => {
 		timer.current = window.setTimeout(fall, 1000);
 	};
 
-	// 消除行
-	const clear = (matrix: Matrix, lines: number[]) => {
-		lines.forEach((line) => {
-			// 清除 一行
-			matrix = matrix.splice(line, 1);
-			// 补齐一行空白格
-			matrix = matrix.unshift(List(blankLine));
-		});
-		return matrix;
-		// dispatch(changeMatrix(matrix));
-		// auto();
-	};
 	// 下一个方块
 	const nextAround = (matrix: Matrix) => {
 		let newMatrix = matrix;
@@ -73,43 +65,22 @@ export const useHandlerEvent = () => {
 			return;
 		}
 
-		// 是否可消除
-		const lines = isClear(newMatrix);
-		if (lines.length) {
-			// 如果湿可以消除的话, 设置颜色
-			const colors: number[] = Array(10).fill(2);
-			lines.forEach((line) => {
+		// 是否有可消除行
+		const clearLines = isClear(newMatrix);
+		console.log(`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 69`, clearLines);
+		if (clearLines.length) {
+			// 有消除行, 执行变色动画, 在调用下一个方块
+			const colors = Array(10).fill(animateColor);
+			clearLines.forEach((line) => {
+				// 设置动画
 				newMatrix = newMatrix.set(line, List(colors));
 			});
-			clearAnimate(newMatrix, lines);
 		}
 		dispatch(changeMatrix(newMatrix));
 		// 设置下一个可移动块
 		dispatch(changeCur({ type: 'O' }));
 		auto();
 	};
-	function clearAnimate(matrix: Matrix, lines: number[]) {
-		const t = window.setTimeout;
-		const anima = (callback: Function) => {
-			t(() => {
-				t(() => {
-					if (typeof callback === 'function') {
-						callback();
-					}
-				}, 100);
-			}, 100);
-		};
-		anima(() => {
-			anima(() => {
-				anima(() => {
-					t(() => {
-						const newMatrix = clear(matrix, lines);
-						dispatch(changeMatrix(newMatrix));
-					}, 100);
-				});
-			});
-		});
-	}
 	// 开始游戏
 	const start = () => {
 		// 1: 开始动画
@@ -169,5 +140,5 @@ export const useHandlerEvent = () => {
 		}
 		auto();
 	};
-	return { start, move, rotate, down, clear, pause };
+	return { start, move, rotate, down, pause };
 };
