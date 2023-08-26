@@ -16,29 +16,6 @@ const Matrix = memo(() => {
 		};
 	}, shallowEqual);
 
-	function clearAnimate() {
-		const t = window.setTimeout;
-		const anima = (callback: Function) => {
-			t(() => {
-				t(() => {
-					if (typeof callback === 'function') {
-						callback();
-					}
-				}, 100);
-			}, 100);
-		};
-		anima(() => {
-			anima(() => {
-				anima(() => {
-					t(() => {
-						// const newMatrix = clear(matrix, lines);
-						// dispatch(changeMatrix(newMatrix));
-						// clear(matrix, lines);
-					}, 100);
-				});
-			});
-		});
-	}
 	const getResult = () => {
 		let matrixData = matrix;
 		// if (lines.length) {

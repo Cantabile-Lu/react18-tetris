@@ -23,10 +23,6 @@ export const useHandlerEvent = () => {
 	const selector = store.getState;
 	const dispatch = useDispatch();
 	const timer = useRef(0);
-
-	const [lines, setLines] = useState<number[]>([]);
-	const [animateColor, setAnimateColor] = useState(0);
-
 	const auto = (timeout = 0) => {
 		// 自动降落函数
 		const fall = () => {
@@ -34,18 +30,16 @@ export const useHandlerEvent = () => {
 			const cur = selector().curSlice.cur!;
 			// 调用块降落函数, 增加xy种的x值
 			const next = cur.fall();
+			let newMatrix = selector().matrixSlice.matrix;
 			// 比较是否触底
-			const isWant = want(
-				next as Required<IBlock>,
-				selector().matrixSlice.matrix
-			);
+			const isWant = want(next as Required<IBlock>, newMatrix);
 			if (isWant) {
 				dispatch(changeCur(next));
 				// 递归调用自身
 				timer.current = window.setTimeout(fall, 100);
 			} else {
 				// 获取当前块并设置新的矩阵
-				const newMatrix = setMatrixLine(cur, selector().matrixSlice.matrix);
+				newMatrix = setMatrixLine(cur, newMatrix);
 				// 块触底
 				nextAround(newMatrix);
 			}
@@ -54,7 +48,14 @@ export const useHandlerEvent = () => {
 		clearTimeout(timer.current);
 		timer.current = window.setTimeout(fall, 1000);
 	};
-
+	const clear = (matrix: Matrix, lines: number[]) => {
+		lines.forEach((line) => {
+			// 清除 一行
+			matrix = matrix.splice(line, 1);
+			// 补齐一行空白格
+			matrix = matrix.unshift(List(blankLine));
+		});
+	};
 	// 下一个方块
 	const nextAround = (matrix: Matrix) => {
 		let newMatrix = matrix;
@@ -64,18 +65,9 @@ export const useHandlerEvent = () => {
 		if (isGameOver(newMatrix)) {
 			return;
 		}
-
 		// 是否有可消除行
 		const clearLines = isClear(newMatrix);
-		console.log(`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 69`, clearLines);
-		if (clearLines.length) {
-			// 有消除行, 执行变色动画, 在调用下一个方块
-			const colors = Array(10).fill(animateColor);
-			clearLines.forEach((line) => {
-				// 设置动画
-				newMatrix = newMatrix.set(line, List(colors));
-			});
-		}
+
 		dispatch(changeMatrix(newMatrix));
 		// 设置下一个可移动块
 		dispatch(changeCur({ type: 'O' }));
