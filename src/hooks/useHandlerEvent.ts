@@ -1,17 +1,11 @@
 import { useDispatch } from 'react-redux';
 import { changeCur } from '../store/cur';
 import { store } from '../store';
-import {
-	getNextBlock,
-	isClear,
-	isGameOver,
-	setMatrixLine,
-	want
-} from '../unit';
+import { isGameOver, setMatrixLine, want } from '../unit';
 import { IBlock, Matrix } from '../types';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { changeMatrix } from '../store/matrix';
-import { is, List } from 'immutable';
+import { List } from 'immutable';
 import { blankLine } from '../constant';
 import { changePause } from '../store/pause';
 
@@ -55,18 +49,21 @@ export const useHandlerEvent = () => {
 			// 补齐一行空白格
 			matrix = matrix.unshift(List(blankLine));
 		});
+		dispatch(changeMatrix(matrix));
+		clearTimeout(timer.current);
+		console.log(`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 54`, timer.current);
+		dispatch(changeCur({ type: 'L' }));
+		auto();
 	};
 	// 下一个方块
 	const nextAround = (matrix: Matrix) => {
-		let newMatrix = matrix;
+		const newMatrix = matrix;
 		clearTimeout(timer.current);
 
 		// 判断是否结束
 		if (isGameOver(newMatrix)) {
 			return;
 		}
-		// 是否有可消除行
-		const clearLines = isClear(newMatrix);
 
 		dispatch(changeMatrix(newMatrix));
 		// 设置下一个可移动块
@@ -132,5 +129,5 @@ export const useHandlerEvent = () => {
 		}
 		auto();
 	};
-	return { start, move, rotate, down, pause };
+	return { start, move, rotate, down, pause, clear };
 };
