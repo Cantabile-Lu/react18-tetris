@@ -30,7 +30,7 @@ export const useHandlerEvent = () => {
 			if (isWant) {
 				dispatch(changeCur(next));
 				// 递归调用自身
-				timer.current = window.setTimeout(fall, 100);
+				timer.current = window.setTimeout(fall, 500);
 			} else {
 				// 获取当前块并设置新的矩阵
 				newMatrix = setMatrixLine(cur, newMatrix);
@@ -50,25 +50,25 @@ export const useHandlerEvent = () => {
 			matrix = matrix.unshift(List(blankLine));
 		});
 		dispatch(changeMatrix(matrix));
-		clearTimeout(timer.current);
-		console.log(`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 54`, timer.current);
-		dispatch(changeCur({ type: 'L' }));
-		auto();
+		// dispatch(changeCur({ type: 'I' }));
 	};
 	// 下一个方块
 	const nextAround = (matrix: Matrix) => {
-		const newMatrix = matrix;
 		clearTimeout(timer.current);
+
+		const newMatrix = matrix;
+		dispatch(changeMatrix(newMatrix));
 
 		// 判断是否结束
 		if (isGameOver(newMatrix)) {
 			return;
 		}
 
-		dispatch(changeMatrix(newMatrix));
-		// 设置下一个可移动块
-		dispatch(changeCur({ type: 'O' }));
-		auto();
+		setTimeout(() => {
+			// 设置下一个可移动块
+			dispatch(changeCur({ type: 'O' }));
+			auto();
+		}, 100);
 	};
 	// 开始游戏
 	const start = () => {
