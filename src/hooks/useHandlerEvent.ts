@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import { changeCur } from '../store/cur';
 import { store } from '../store';
-import { isGameOver, setMatrixLine, want } from '../unit';
+import { getNextBlock, isGameOver, setMatrixLine, want } from '../unit';
 import { IBlock, Matrix } from '../types';
 import { useRef } from 'react';
 import { changeMatrix } from '../store/matrix';
@@ -49,8 +49,8 @@ export const useHandlerEvent = () => {
 			// 补齐一行空白格
 			matrix = matrix.unshift(List(blankLine));
 		});
+		// 清除之后从新设置矩阵
 		dispatch(changeMatrix(matrix));
-		// dispatch(changeCur({ type: 'I' }));
 	};
 	// 下一个方块
 	const nextAround = (matrix: Matrix) => {
@@ -66,7 +66,7 @@ export const useHandlerEvent = () => {
 
 		setTimeout(() => {
 			// 设置下一个可移动块
-			dispatch(changeCur({ type: 'O' }));
+			dispatch(changeCur({ type: getNextBlock() }));
 			auto();
 		}, 100);
 	};
@@ -76,7 +76,7 @@ export const useHandlerEvent = () => {
 		// 2: 开始音效
 		// 3:  设置难度起始行
 		// 4:  设置当前可移动块
-		dispatch(changeCur({ type: 'O' }));
+		dispatch(changeCur({ type: getNextBlock() }));
 		// 5:  设置下一个可移动块
 		// 6:  开始自动落下
 		auto();
