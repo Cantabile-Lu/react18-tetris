@@ -70,8 +70,13 @@ export const useHandlerEvent = () => {
 			auto();
 		}, 100);
 	};
+
 	// 开始游戏
 	const start = () => {
+		// 如果游戏已经开始, 则不执行以下操作
+		if (selector().curSlice.cur) {
+			return;
+		}
 		// 1: 开始动画
 		// 2: 开始音效
 		// 3:  设置难度起始行
