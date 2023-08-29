@@ -50,9 +50,7 @@ const Matrix = memo(() => {
 			anima(() => {
 				anima(() => {
 					t(() => {
-						console.log(`🚀🚀🚀🚀🚀-> in index.tsx on 49`, '执行清除');
 						clear(matrix, lines);
-						// states.clearLines(this.props.matrix, this.state.clearLines);
 					}, 100);
 				});
 			});

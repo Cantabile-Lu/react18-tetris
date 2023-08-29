@@ -17,7 +17,8 @@ export const useHandlerEvent = () => {
 	const selector = store.getState;
 	const dispatch = useDispatch();
 	const timer = useRef(0);
-	const auto = () => {
+	const auto = (timeout = 0) => {
+		const out = timeout < 0 ? 0 : timeout;
 		// 自动降落函数
 		const fall = () => {
 			// 获取当前可移动块
@@ -40,7 +41,7 @@ export const useHandlerEvent = () => {
 			// 重置当前可移动块
 		};
 		clearTimeout(timer.current);
-		timer.current = window.setTimeout(fall, 1000);
+		timer.current = window.setTimeout(fall, out);
 	};
 	const clear = (matrix: Matrix, lines: number[]) => {
 		lines.forEach((line) => {
@@ -73,8 +74,17 @@ export const useHandlerEvent = () => {
 
 	// 开始游戏
 	const start = () => {
-		// 如果游戏已经开始, 则返回
+		// 如果被锁, 则不能开始
+		if (selector().lockSlice.lock) {
+			return;
+		}
+		// 如果游戏已经开始, 那么表示的是迅速落下
 		if (selector().curSlice.cur) {
+			// 游戏已经开始, 如果是暂停状态,则解除暂停
+			if (selector().pauseSlice.pause) {
+				pause(false);
+				return;
+			}
 			return;
 		}
 		// 1: 开始动画
@@ -90,6 +100,10 @@ export const useHandlerEvent = () => {
 	const move = (isRight: boolean) => {
 		const cur = selector().curSlice.cur;
 		if (cur) {
+			if (selector().pauseSlice.pause) {
+				pause(false);
+				return; // 如果本次操作仅仅是解除暂停, 则不进行移动
+			}
 			const next = isRight ? cur.right() : cur.left();
 			if (want(next, selector().matrixSlice.matrix)) {
 				dispatch(changeCur(next));
@@ -101,6 +115,10 @@ export const useHandlerEvent = () => {
 	const rotate = () => {
 		const cur = selector().curSlice.cur;
 		if (cur) {
+			if (selector().pauseSlice.pause) {
+				pause(false);
+				return; // 如果本次操作仅仅是解除暂停, 则不进行移动
+			}
 			const next = cur.rotate();
 			if (want(next, selector().matrixSlice.matrix)) {
 				dispatch(changeCur(next));
@@ -118,6 +136,10 @@ export const useHandlerEvent = () => {
 			return;
 		}
 		if (cur) {
+			if (selector().pauseSlice.pause) {
+				pause(false);
+				return; // 如果本次操作仅仅是解除暂停, 则不进行移动
+			}
 			const next = cur.fall();
 			if (want(next, selector().matrixSlice.matrix)) {
 				dispatch(changeCur(next));
@@ -132,6 +154,7 @@ export const useHandlerEvent = () => {
 			clearTimeout(timer.current);
 			return;
 		}
+
 		auto();
 	};
 	return { start, move, rotate, down, pause, clear };
