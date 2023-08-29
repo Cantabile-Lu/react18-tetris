@@ -17,7 +17,7 @@ export const useHandlerEvent = () => {
 	const selector = store.getState;
 	const dispatch = useDispatch();
 	const timer = useRef(0);
-	const auto = (timeout = 0) => {
+	const auto = () => {
 		// 自动降落函数
 		const fall = () => {
 			// 获取当前可移动块
@@ -73,7 +73,7 @@ export const useHandlerEvent = () => {
 
 	// 开始游戏
 	const start = () => {
-		// 如果游戏已经开始, 则不执行以下操作
+		// 如果游戏已经开始, 则返回
 		if (selector().curSlice.cur) {
 			return;
 		}

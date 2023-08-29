@@ -5,6 +5,7 @@ import {
 import matrixSlice from './matrix';
 import curSlice from './cur';
 import pauseSlice from './pause';
+import lockSlice from './lock';
 const immutableInvariantMiddleware = createImmutableStateInvariantMiddleware({
 	ignoredPaths: ['curSlice.cur', 'matrixSlice.matrix']
 });
@@ -12,7 +13,8 @@ export const store = configureStore({
 	reducer: {
 		matrixSlice,
 		curSlice,
-		pauseSlice
+		pauseSlice,
+		lockSlice
 	},
 	//https://stackoverflow.com/questions/61704805/getting-an-error-a-non-serializable-value-was-detected-in-the-state-when-using
 	middleware: [immutableInvariantMiddleware]
