@@ -74,27 +74,51 @@ export const useHandlerEvent = () => {
 
 	// 开始游戏
 	const start = () => {
-		// 如果被锁, 则不能开始
-		if (selector().lockSlice.lock) {
-			return;
-		}
-		// 如果游戏已经开始, 那么表示的是迅速落下
-		if (selector().curSlice.cur) {
-			// 游戏已经开始, 如果是暂停状态,则解除暂停
-			if (selector().pauseSlice.pause) {
-				pause(false);
-				return;
-			}
-			return;
-		}
 		// 1: 开始动画
 		// 2: 开始音效
 		// 3:  设置难度起始行
 		// 4:  设置当前可移动块
 		dispatch(changeCur({ type: getNextBlock() }));
+		auto();
 		// 5:  设置下一个可移动块
 		// 6:  开始自动落下
-		auto();
+	};
+	const space = () => {
+		const cur = selector().curSlice.cur;
+		// 如果被锁, 则不能开始
+		if (selector().lockSlice.lock) {
+			return;
+		}
+		// 如果游戏已经开始, 那么表示的是迅速落下
+		if (cur) {
+			// 游戏已经开始, 如果是暂停状态,则解除暂停
+			if (selector().pauseSlice.pause) {
+				pause(false);
+				return;
+			}
+			let index = 0;
+			// 获取到底部的块
+			let bottom = cur.fall(index);
+			while (want(bottom, selector().matrixSlice.matrix)) {
+				bottom = cur.fall(index);
+				// 递增
+				index++;
+			}
+			// 为什么要 -2？
+			console.log(
+				`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 108`,
+				bottom.xy.toJS(),
+				index
+			);
+			bottom = cur.fall(index - 2);
+			dispatch(changeCur(bottom));
+			let matrix = selector().matrixSlice.matrix;
+			matrix = setMatrixLine(bottom, matrix);
+			// console.log(`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 98`, matrix);
+			nextAround(matrix);
+		} else {
+			start();
+		}
 	};
 	// 左右移动块
 	const move = (isRight: boolean) => {
@@ -154,8 +178,7 @@ export const useHandlerEvent = () => {
 			clearTimeout(timer.current);
 			return;
 		}
-
 		auto();
 	};
-	return { start, move, rotate, down, pause, clear };
+	return { start, space, move, rotate, down, pause, clear };
 };

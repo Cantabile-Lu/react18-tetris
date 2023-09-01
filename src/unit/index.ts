@@ -85,8 +85,9 @@ export const isClear = (matrix: Matrix) => {
  * @description 生成随机方块值
  */
 export const getNextBlock = (): BlockType => {
-	const len = blockType.length;
-	return blockType[Math.floor(Math.random() * len)];
+	return 'I';
+	// const len = blockType.length;
+	// return blockType[Math.floor(Math.random() * len)];
 };
 // 消除行
 export const clear = (matrix: Matrix, lines: number[]) => {
