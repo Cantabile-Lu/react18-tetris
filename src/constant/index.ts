@@ -36,3 +36,5 @@ export const blankLine: number[] = Array(10).fill(0);
 export const fillLine: number[] = Array(10).fill(1);
 // 空白矩阵
 export const blankMatrix = List<List<number>>(Array(20).fill(List(blankLine)));
+// 下降速度
+export const speeds = [800, 650, 500, 370, 250, 160];

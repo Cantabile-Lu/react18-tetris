@@ -6,7 +6,7 @@ import { IBlock, Matrix } from '../types';
 import { useRef } from 'react';
 import { changeMatrix } from '../store/matrix';
 import { List } from 'immutable';
-import { blankLine } from '../constant';
+import { blankLine, speeds } from '../constant';
 import { changePause } from '../store/pause';
 
 /**
@@ -31,7 +31,10 @@ export const useHandlerEvent = () => {
 			if (isWant) {
 				dispatch(changeCur(next));
 				// 递归调用自身
-				timer.current = window.setTimeout(fall, 500);
+				timer.current = window.setTimeout(
+					fall,
+					speeds[selector().speedRunSlice.speedRun] - 1
+				);
 			} else {
 				// 获取当前块并设置新的矩阵
 				newMatrix = setMatrixLine(cur, newMatrix);
@@ -104,13 +107,8 @@ export const useHandlerEvent = () => {
 				// 递增
 				index++;
 			}
-			// 为什么要 -2？
-			console.log(
-				`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 108`,
-				bottom.xy.toJS(),
-				index
-			);
 			bottom = cur.fall(index - 2);
+
 			dispatch(changeCur(bottom));
 			let matrix = selector().matrixSlice.matrix;
 			matrix = setMatrixLine(bottom, matrix);
