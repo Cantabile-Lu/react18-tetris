@@ -6,8 +6,10 @@
 import style from './style.module.less';
 import { Button } from './Button';
 import { useHandlerEvent } from '../../hooks/useHandlerEvent.ts';
+import { useMusic } from '../../hooks/useMusic.ts';
 export const Keyboard = () => {
 	const { space, move, rotate, down, pause } = useHandlerEvent();
+	const { musicStart } = useMusic();
 	return (
 		<div className={style.keyboard}>
 			<Button
@@ -79,7 +81,9 @@ export const Keyboard = () => {
 				top={0}
 				left={106}
 				label={`S`}
-				active={() => {}}
+				active={() => {
+					musicStart();
+				}}
 			/>
 			<Button
 				color="green"
