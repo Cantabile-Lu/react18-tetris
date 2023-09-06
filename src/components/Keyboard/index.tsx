@@ -7,7 +7,8 @@ import style from './style.module.less';
 import { Button } from './Button';
 import { useHandlerEvent } from '../../hooks/useHandlerEvent.ts';
 import { useMusic } from '../../hooks/useMusic.ts';
-export const Keyboard = () => {
+import { memo } from 'react';
+export const Keyboard = memo(() => {
 	const { space, move, rotate, down, pause } = useHandlerEvent();
 	const { musicStart } = useMusic();
 	return (
@@ -97,4 +98,4 @@ export const Keyboard = () => {
 			/>
 		</div>
 	);
-};
+});
