@@ -15,6 +15,7 @@ import { List } from 'immutable';
 import { blankLine, speeds } from '../constant';
 import { changePause } from '../store/pause';
 import { Music } from '../unit/Music.ts';
+import { changeLock } from '../store/lock';
 
 /**
  * @description 处理事件
@@ -45,7 +46,7 @@ export const useHandlerEvent = () => {
 	const [music, setMusic] = useState<MusicType>(defaultMusic);
 
 	const auto = (timeout = 0) => {
-		const out = timeout < 0 ? 0 : timeout;
+		const out = timeout < 0 ? 500 : timeout;
 		// 自动降落函数
 		const fall = () => {
 			// 获取当前可移动块
@@ -90,9 +91,11 @@ export const useHandlerEvent = () => {
 		dispatch(changeMatrix(matrix));
 		// 判断是否结束
 		if (isGameOver(matrix)) {
+			music.gameOver();
+			overStart();
 			return;
 		}
-		// 是否清楚
+		// 是否清除
 		if (isClear(matrix).length) {
 			music.clear();
 		}
@@ -108,8 +111,8 @@ export const useHandlerEvent = () => {
 	const start = () => {
 		// 1: 开始动画
 		// 2: 开始音效
-		const musicTarget = new Music('./music.mp3');
-		setMusic(musicTarget);
+
+		music.start();
 		// 3:  设置难度起始行
 		// 4:  设置当前可移动块
 		dispatch(changeCur({ type: getNextBlock() }));
@@ -144,14 +147,20 @@ export const useHandlerEvent = () => {
 			dispatch(changeCur(bottom));
 			let matrix = selector().matrixSlice.matrix;
 			matrix = setMatrixLine(bottom, matrix);
-			// console.log(`🚀🚀🚀🚀🚀-> in useHandlerEvent.ts on 98`, matrix);
 			nextAround(matrix);
 		} else {
 			start();
 		}
 	};
+
+	const overStart = () => {
+		dispatch(changeLock(true));
+	};
 	// 左右移动块
 	const move = (isRight: boolean) => {
+		if (selector().lockSlice.lock) {
+			return;
+		}
 		const cur = selector().curSlice.cur;
 		music.move();
 
@@ -214,6 +223,10 @@ export const useHandlerEvent = () => {
 		}
 		auto();
 	};
-	const s = () => {};
+
+	const s = () => {
+		const musicTarget = new Music('./music.mp3');
+		setMusic(musicTarget);
+	};
 	return { start, space, move, rotate, down, pause, clear, s };
 };

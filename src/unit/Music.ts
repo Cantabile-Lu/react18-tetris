@@ -8,7 +8,6 @@ export class Music {
 		this.#context = new AudioContext();
 		this.getMusic().then((fn) => {
 			this.#getSource = fn;
-			this.start();
 		});
 	}
 	async getMusic() {
