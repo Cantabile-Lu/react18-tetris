@@ -1,22 +1,49 @@
 import { useDispatch } from 'react-redux';
 import { changeCur } from '../store/cur';
 import { store } from '../store';
-import { getNextBlock, isGameOver, setMatrixLine, want } from '../unit';
+import {
+	getNextBlock,
+	isClear,
+	isGameOver,
+	setMatrixLine,
+	want
+} from '../unit';
 import { IBlock, Matrix } from '../types';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { changeMatrix } from '../store/matrix';
 import { List } from 'immutable';
 import { blankLine, speeds } from '../constant';
 import { changePause } from '../store/pause';
+import { Music } from '../unit/Music.ts';
 
 /**
  * @description 处理事件
  * @date: 2023-08-19
  */
+
+type MusicType = {
+	start: () => void;
+	clear: () => void;
+	fall: () => void;
+	gameOver: () => void;
+	rotate: () => void;
+	move: () => void;
+};
+const defaultMusic: MusicType = {
+	start: () => {},
+	clear: () => {},
+	fall: () => {},
+	gameOver: () => {},
+	rotate: () => {},
+	move: () => {}
+};
 export const useHandlerEvent = () => {
 	const selector = store.getState;
 	const dispatch = useDispatch();
 	const timer = useRef(0);
+
+	const [music, setMusic] = useState<MusicType>(defaultMusic);
+
 	const auto = (timeout = 0) => {
 		const out = timeout < 0 ? 0 : timeout;
 		// 自动降落函数
@@ -60,12 +87,14 @@ export const useHandlerEvent = () => {
 	const nextAround = (matrix: Matrix) => {
 		clearTimeout(timer.current);
 
-		const newMatrix = matrix;
-		dispatch(changeMatrix(newMatrix));
-
+		dispatch(changeMatrix(matrix));
 		// 判断是否结束
-		if (isGameOver(newMatrix)) {
+		if (isGameOver(matrix)) {
 			return;
+		}
+		// 是否清楚
+		if (isClear(matrix).length) {
+			music.clear();
 		}
 
 		setTimeout(() => {
@@ -79,6 +108,8 @@ export const useHandlerEvent = () => {
 	const start = () => {
 		// 1: 开始动画
 		// 2: 开始音效
+		const musicTarget = new Music('./music.mp3');
+		setMusic(musicTarget);
 		// 3:  设置难度起始行
 		// 4:  设置当前可移动块
 		dispatch(changeCur({ type: getNextBlock() }));
@@ -94,6 +125,7 @@ export const useHandlerEvent = () => {
 		}
 		// 如果游戏已经开始, 那么表示的是迅速落下
 		if (cur) {
+			music.fall();
 			// 游戏已经开始, 如果是暂停状态,则解除暂停
 			if (selector().pauseSlice.pause) {
 				pause(false);
@@ -121,6 +153,8 @@ export const useHandlerEvent = () => {
 	// 左右移动块
 	const move = (isRight: boolean) => {
 		const cur = selector().curSlice.cur;
+		music.move();
+
 		if (cur) {
 			if (selector().pauseSlice.pause) {
 				pause(false);
@@ -136,6 +170,7 @@ export const useHandlerEvent = () => {
 	// 旋转块
 	const rotate = () => {
 		const cur = selector().curSlice.cur;
+		music.rotate();
 		if (cur) {
 			if (selector().pauseSlice.pause) {
 				pause(false);
@@ -153,6 +188,7 @@ export const useHandlerEvent = () => {
 		// 2: 可以设置难度, 起始行
 		const cur = selector().curSlice.cur;
 		const isPause = selector().pauseSlice.pause;
+		music.move();
 		if (isPause) {
 			pause(false);
 			return;
@@ -178,5 +214,6 @@ export const useHandlerEvent = () => {
 		}
 		auto();
 	};
-	return { start, space, move, rotate, down, pause, clear };
+	const s = () => {};
+	return { start, space, move, rotate, down, pause, clear, s };
 };

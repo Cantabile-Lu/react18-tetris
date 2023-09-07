@@ -1,5 +1,5 @@
 import { BlockType, IBlock, Matrix } from '../types';
-import { blankLine, blockType } from '../constant';
+import { blankLine } from '../constant';
 import { List } from 'immutable';
 
 /**
