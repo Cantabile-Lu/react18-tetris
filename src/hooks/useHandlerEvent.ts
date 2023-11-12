@@ -111,7 +111,6 @@ export const useHandlerEvent = () => {
 	const start = () => {
 		// 1: 开始动画
 		// 2: 开始音效
-
 		music.start();
 		// 3:  设置难度起始行
 		// 4:  设置当前可移动块
@@ -143,7 +142,6 @@ export const useHandlerEvent = () => {
 				index++;
 			}
 			bottom = cur.fall(index - 2);
-
 			dispatch(changeCur(bottom));
 			let matrix = selector().matrixSlice.matrix;
 			matrix = setMatrixLine(bottom, matrix);
